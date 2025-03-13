@@ -42,48 +42,37 @@
     <section id="home" class="hero">
         <!-- Add the SVG as a background element -->
         <div class="hero-svg-background">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
-                <!-- Background gradient -->
-                <defs>
-                  <linearGradient id="batGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#000000" stop-opacity="0.3"/>
-                    <stop offset="100%" stop-color="#3a0000" stop-opacity="0.3"/>
-                  </linearGradient>
-                  
-                  <!-- Brush pattern -->
-                  <pattern id="brushPattern" patternUnits="userSpaceOnUse" width="300" height="300">
-                    <path d="M10,50 Q80,10 150,50 T290,50" stroke="#ff0000" stroke-width="2" fill="none" opacity="0.1" />
-                    <path d="M10,100 Q120,30 200,100 T290,100" stroke="#cc0000" stroke-width="3" fill="none" opacity="0.1" />
-                    <path d="M50,150 Q150,60 250,150" stroke="#aa0000" stroke-width="2" fill="none" opacity="0.1" />
-                  </pattern>
-                </defs>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+              <!-- Background gradient -->
+              <defs>
+                <linearGradient id="batGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#000000" stop-opacity="0.3"/>
+                  <stop offset="100%" stop-color="#3a0000" stop-opacity="0.3"/>
+                </linearGradient>
+                
+                <!-- Brush pattern -->
+                <pattern id="brushPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+                  <path d="M10,50 Q80,10 150,50 T290,50" stroke="#ff0000" stroke-width="2" fill="none" opacity="0.1" />
+                  <path d="M10,100 Q120,30 200,100 T290,100" stroke="#cc0000" stroke-width="3" fill="none" opacity="0.1" />
+                  <path d="M50,150 Q150,60 250,150" stroke="#aa0000" stroke-width="2" fill="none" opacity="0.1" />
+                </pattern>
+              </defs>
+            
+              <!-- Base rectangle with gradient -->
+              <rect width="100%" height="100%" fill="url(#batGradient)" />
               
-                <!-- Base rectangle with gradient -->
-                <rect width="100%" height="100%" fill="url(#batGradient)" />
-                
-                
-                
-                
-                <!-- Geometric patterns -->
-                <rect width="100%" height="100%" fill="url(#brushPattern)" />
-                
-                <!-- Angular brush strokes -->
-                <path d="M0,100 L200,50 L400,150 L600,100 L800,200 L1000,120 L1200,180" stroke="#ff0000" stroke-width="5" fill="none" opacity="0.08" />
-                <path d="M0,300 L300,200 L500,350 L700,250 L900,300 L1200,220" stroke="#cc0000" stroke-width="3" fill="none" opacity="0.06" />
-                <path d="M0,500 L200,450 L400,500 L600,400 L800,500 L1000,400 L1200,450" stroke="#990000" stroke-width="4" fill="none" opacity="0.07" />
-                
-                
-                <!-- Additional TMZ elements semi-hidden -->
-                <text x="30%" y="39%" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.06" transform="rotate(0, 0, 0)">T</text>
-                <text x="43%" y="39%" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.06" transform="rotate(0, 0, 0)">M</text>
-                <text x="60%" y="40%" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.06" transform="rotate(0, 0, 0)">Z</text>
-                
-                
-              </svg>
-           
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
-                <!-- All the SVG content from above -->
+              <!-- Geometric patterns -->
+              <rect width="100%" height="100%" fill="url(#brushPattern)" />
+              
+              <!-- Angular brush strokes -->
+              <path d="M0,100 L200,50 L400,150 L600,100 L800,200 L1000,120 L1200,180" stroke="#ff0000" stroke-width="5" fill="none" opacity="0.08" />
+              <path d="M0,300 L300,200 L500,350 L700,250 L900,300 L1200,220" stroke="#cc0000" stroke-width="3" fill="none" opacity="0.06" />
+              <path d="M0,500 L200,450 L400,500 L600,400 L800,500 L1000,400 L1200,450" stroke="#990000" stroke-width="4" fill="none" opacity="0.07" />
+              
+              <!-- TMZ as a single text element, centered and positioned in the visible area -->
+              <text x="50%" y="32%" text-anchor="middle" dominant-baseline="middle" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.06">TMZ</text>
             </svg>
+          </div>
         </div>
         <div class="abstract-pattern"></div>
         <div class="container">
