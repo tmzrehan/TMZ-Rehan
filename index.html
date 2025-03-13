@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TMZ Photography</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Replace with your own public key
+            emailjs.init("McJnppe6qR_gDjPsp");
+        })();
+    </script>
+</head>
+<body>
+    <!-- Header with Navigation -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">
+                    <div class="logo-img"></div>
+                    <h1>TMZ</h1>
+                </div>
+                <div class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact" class="btn">Book Now</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <!-- Add the SVG as a background element -->
+        <div class="hero-svg-background">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                <!-- Background gradient -->
+                <defs>
+                  <linearGradient id="batGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#000000" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#3a0000" stop-opacity="0.3"/>
+                  </linearGradient>
+                  
+                  <!-- Brush pattern -->
+                  <pattern id="brushPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+                    <path d="M10,50 Q80,10 150,50 T290,50" stroke="#ff0000" stroke-width="2" fill="none" opacity="0.1" />
+                    <path d="M10,100 Q120,30 200,100 T290,100" stroke="#cc0000" stroke-width="3" fill="none" opacity="0.1" />
+                    <path d="M50,150 Q150,60 250,150" stroke="#aa0000" stroke-width="2" fill="none" opacity="0.1" />
+                  </pattern>
+                </defs>
+              
+                <!-- Base rectangle with gradient -->
+                <rect width="100%" height="100%" fill="url(#batGradient)" />
+                
+                
+                
+                
+                <!-- Geometric patterns -->
+                <rect width="100%" height="100%" fill="url(#brushPattern)" />
+                
+                <!-- Angular brush strokes -->
+                <path d="M0,100 L200,50 L400,150 L600,100 L800,200 L1000,120 L1200,180" stroke="#ff0000" stroke-width="5" fill="none" opacity="0.08" />
+                <path d="M0,300 L300,200 L500,350 L700,250 L900,300 L1200,220" stroke="#cc0000" stroke-width="3" fill="none" opacity="0.06" />
+                <path d="M0,500 L200,450 L400,500 L600,400 L800,500 L1000,400 L1200,450" stroke="#990000" stroke-width="4" fill="none" opacity="0.07" />
+                
+                
+                <!-- Additional TMZ elements semi-hidden -->
+                <text x="20%" y="39%" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.03" transform="rotate(0, 0, 0)">T</text>
+                <text x="38%" y="39%" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.03" transform="rotate(0, 0, 0)">M</text>
+                <text x="60%" y="40%" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.03" transform="rotate(0, 0, 0)">Z</text>
+                
+                <!-- Added additional bat-like symbol elements -->
+                <path d="M400,300 C500,250 700,250 800,300 C750,400 650,420 600,420 C550,420 450,400 400,300 Z" fill="#330000" opacity="0.07" />
+                <path d="M500,150 C550,120 650,120 700,150 C680,200 620,210 600,210 C580,210 520,200 500,150 Z" fill="#220000" opacity="0.05" />
+              </svg>
+           
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+                <!-- All the SVG content from above -->
+            </svg>
+        </div>
+        <div class="abstract-pattern"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Capturing the <span class="highlight">Perfect Moments</span> on the Court</h1>
+                <p>Professional basketball photography with a unique Batman-inspired style</p>
+                <div class="hero-btns">
+                    <a href="#gallery" class="btn">View Gallery</a>
+                    <a href="#contact" class="btn btn-outline">Contact Me</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <div class="image-placeholder">
+                        <img src="images/rehan.png"  alt="rehan">
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h2>About <span class="highlight">Me</span></h2>
+                    <p>I'm a professional photographer specializing in basketball photography. With my unique Batman-inspired style, I capture the intensity, passion, and drama of the game.</p>
+                    <p>My approach combines technical expertise with an artistic eye, resulting in images that tell compelling stories of the basketball world.</p>
+                    <div class="stats">
+                        <div class="stat">
+                            <h3>200+</h3>
+                            <p>Games Covered</p>
+                        </div>
+                        <div class="stat">
+                            <h3>50+</h3>
+                            <p>Happy Clients</p>
+                        </div>
+                        <div class="stat">
+                            <h3>5+</h3>
+                            <p>Years Experience</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+         <div class="abstract-pattern-2"></div>
+         <div class="container">
+             <div class="section-header">
+                 <h2>My <span class="highlight">Services</span></h2>
+                 <p>Professional photography services for basketball enthusiasts</p>
+             </div>
+             <div class="services-grid">
+                 <div class="service-card">
+                     <i class="fas fa-basketball-ball"></i>
+                     <h3>Game Coverage</h3>
+                     <p>Professional photography for games, tournaments, and championships</p>
+                 </div>
+                 <div class="service-card">
+                     <i class="fas fa-user"></i>
+                     <h3>Player Portraits</h3>
+                     <p>Stunning portraits for individual players and teams</p>
+                 </div>
+                 <div class="service-card">
+                      <i class="fas fa-calendar-alt"></i>
+                     <h3>Events</h3>
+                     <p>Coverage for basketball camps, clinics, and special events</p>
+                 </div>
+                 <div class="service-card">
+                     <i class="fas fa-edit"></i>
+                     <h3>Editing</h3>
+                     <p>Professional editing with Batman-inspired dark aesthetics</p>
+                 </div>
+             </div>
+         </div>
+     </section>
+<!-- Gallery Section -->
+<section id="gallery" class="gallery">
+    <div class="container">
+        <div class="section-header">
+            <h2>Photo <span class="highlight">Gallery</span></h2>
+            <p>Check out some of my best basketball shots</p>
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="game">Game Action</button>
+            <button class="filter-btn" data-filter="portrait">Player Portraits</button>
+            <button class="filter-btn" data-filter="event">Events</button>
+        </div>
+        <div class="gallery-grid">
+            <!-- Gallery items will be added dynamically with JavaScript -->
+        </div>
+        <div class="gallery-modal">
+            <span class="close-modal">&times;</span>
+            <img class="modal-content" id="modal-image">
+            <div class="modal-caption"></div>
+            <a class="prev">&#10094;</a>
+            <a class="next">&#10095;</a>
+        </div>
+    </div>
+</section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2>Get in <span class="highlight">Touch</span></h2>
+                <p>Ready to book your photography session? Reach out to me!</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email</h3>
+                        <a href="mailto:tmzrehan@gmail.com"><p>tmzrehan@gmail.com</p></a>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <h3>Phone</h3>
+                        <a href="tel:+9188841 95115"><p>+91 88841 95115</p></a>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>Location</h3>
+                        <p>Bangalore, India</p>
+                    </div>
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/tmz_rehan/"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="booking-form">
+                        <div class="form-group">
+                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <select id="service" name="service" required>
+                                <option value="" disabled selected>Select Service</option>
+                                <option value="game">Game Coverage</option>
+                                <option value="portrait">Player Portraits</option>
+                                <option value="event">Events</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- WhatsApp Contact Section -->
+<div class="whatsapp-contact">
+    <div class="container">
+        <div class="section-header">
+            <h2>Quick <span class="highlight">WhatsApp</span> Connect</h2>
+            <p>Send me a direct message on WhatsApp with your inquiry</p>
+        </div>
+        <div class="whatsapp-form-container">
+            <form id="whatsapp-form" class="contact-form">
+                <div class="form-group">
+                    <input type="text" id="whatsapp-name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="whatsapp-phone" name="phone" placeholder="Your WhatsApp Number (with country code)" required>
+                </div>
+                <div class="form-group">
+                    <select id="whatsapp-inquiry" name="inquiry" required>
+                        <option value="" disabled selected>Select Inquiry Type</option>
+                        <option value="Booking">Booking Request</option>
+                        <option value="Pricing">Pricing Information</option>
+                        <option value="Availability">Check Availability</option>
+                        <option value="Other">Other Inquiry</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <textarea id="whatsapp-message" name="message" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" class="btn whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> Connect on WhatsApp
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add this to your existing CSS -->
+<style>
+.whatsapp-contact {
+    padding: 50px 0 100px;
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(10, 10, 10, 0.5);
+}
+
+.whatsapp-contact::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 0, 0, 0.671) 0%, transparent 50%), 
+    radial-gradient(circle, rgba(139, 0, 0, 0.404) 10%, transparent 50%);    background-blend-mode: screen;
+    opacity: 0.15;
+    z-index: -1;
+}
+
+.whatsapp-form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--gray);
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.whatsapp-btn {
+    background-color: #25D366;
+    border-color: #25D366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.whatsapp-btn:hover {
+    background-color: transparent;
+    color: #25D366;
+    border-color: #25D366;
+}
+
+.whatsapp-btn i {
+    font-size: 1.2rem;
+}
+</style>
+
+<!-- Add this JavaScript to your script.js file -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const whatsappForm = document.getElementById('whatsapp-form');
+    
+    if (whatsappForm) {
+        whatsappForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('whatsapp-name').value;
+            const phone = document.getElementById('whatsapp-phone').value;
+            const inquiry = document.getElementById('whatsapp-inquiry').value;
+            const message = document.getElementById('whatsapp-message').value;
+            
+            // Format the message for WhatsApp
+            const formattedMessage = `Hi! I'm ${name}. Inquiry Type: ${inquiry}. Message: ${message}`;
+            
+            // Create WhatsApp URL - using the TMZ phone number from the contact info
+            const whatsappNumber = "+918884195115"; // Using the photographer's number
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(formattedMessage)}`;
+            
+            // Open WhatsApp in a new tab
+            window.open(whatsappURL, '_blank');
+            
+            // Reset the form
+            whatsappForm.reset();
+        });
+    }
+});
+</script>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="logo">
+                    <div class="logo-img"></div>
+                    <h2>TMZ</h2>
+                </div>
+                <p>&copy; 2025 TMZ Photography. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
