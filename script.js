@@ -134,21 +134,104 @@ document.addEventListener('DOMContentLoaded', function() {
             image: 'images/crazy.png',
             title: 'Crazy Shot',
             description: "Womens' interleague cup",
-        },
+        }
+        
     ];
     
-    // Populate gallery with items
-    function populateGallery(items) {
-        galleryGrid.innerHTML = '';
+    // Modify the gallery items array by adding a download item for each category
+    function addDownloadItemsToGallery(items) {
+        // Get unique categories
+        const categories = [...new Set(items.map(item => item.category))];
         
-        items.forEach((item, index) => {
-            const galleryItem = document.createElement('div');
-            galleryItem.className = 'gallery-item';
-            galleryItem.dataset.category = item.category;
-            galleryItem.dataset.id = item.id;
-            
-            galleryItem.style.animationDelay = `${0.1 * (index % 8)}s`;
-            
+
+
+
+        // Create download items for each category with different background images
+const downloadItems = categories.map((category, index) => {
+    // Define different images for each category
+    let imageUrl;
+    switch(category) {
+        case 'game':
+        case 'game action':
+            imageUrl = 'images/camera.jpeg';
+            break;
+        case 'portrait':
+            imageUrl = 'images/baddie.jpeg';
+            break;
+        case 'event':
+            imageUrl = 'images/stagebaddie.jpeg';
+            break;
+        default:
+            imageUrl = 'images/reha.png';
+    }
+    
+    return {
+        id: 1000 + index,
+        category: category,
+        image: imageUrl,
+        title: 'Download Portfolio',
+        description: `Download my ${category} photography portfolio`,
+        isDownloadItem: true,
+        // Add the download URL for each category
+        downloadUrl: 'https://drive.google.com/file/d/1mn7OR41WtwraVNNyDDyTsbxQgHWuom_4/view?usp=drive_link'
+    };
+});
+
+// Add a general download item for the "all" category
+downloadItems.push({
+    id: 999,
+    category: 'all',
+    image: 'images/bikers.jpeg',
+    title: 'Complete Portfolio',
+    description: 'Download my complete photography portfolio',
+    isDownloadItem: true,
+    // Add the download URL for the all category
+    downloadUrl: 'https://drive.google.com/file/d/1mn7OR41WtwraVNNyDDyTsbxQgHWuom_4/view?usp=drive_link'
+});
+
+
+
+
+
+
+        // Return combined array
+        return [...items, ...downloadItems];
+    }
+
+    // Update the gallery items array
+    const enhancedGalleryItems = addDownloadItemsToGallery(galleryItems);
+    
+    // Populate gallery with items
+   // Populate gallery with items
+function populateGallery(items) {
+    galleryGrid.innerHTML = '';
+
+    items.forEach((item, index) => {
+        const galleryItem = document.createElement('div');
+        galleryItem.className = 'gallery-item';
+        if (item.isDownloadItem) {
+            galleryItem.className += ' download-item';
+        }
+        galleryItem.dataset.category = item.category;
+        galleryItem.dataset.id = item.id;
+
+        galleryItem.style.animationDelay = `${0.1 * (index % 8)}s`;
+
+        // Create different HTML structure for download items
+        if (item.isDownloadItem) {
+            galleryItem.innerHTML = `
+                <div class="download-container">
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="overlay">
+                        <h3>${item.title}</h3>
+                        <p>${item.description}</p>
+                        <a href="${item.downloadUrl}" target="_blank" class="download-btn">Download PDF</a> <!-- ✅ Drive Link -->
+                    </div>
+                </div>
+            `;
+
+        } else {
+            // Regular gallery item
             galleryItem.innerHTML = `
                 <img src="${item.image}" alt="${item.title}">
                 <div class="overlay">
@@ -156,21 +239,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p>${item.description}</p>
                 </div>
             `;
-            
-            galleryGrid.appendChild(galleryItem);
-            
-            // Add click event for modal
+
+            // Add click event for modal on regular items
             galleryItem.addEventListener('click', function() {
                 openModal(item);
             });
-        });
-    }
+        }
+
+        galleryGrid.appendChild(galleryItem);
+    });
+}
+
     
     // Initialize gallery and set currentGalleryItems
-    let currentGalleryItems = galleryItems;
+    let currentGalleryItems = enhancedGalleryItems.filter(item => 
+        !item.isDownloadItem || item.category === 'all'
+    );
     
     // Make sure we populate the gallery before setting up filters
-    populateGallery(galleryItems);
+    populateGallery(currentGalleryItems);
     
     // Set active class on "All" filter button
     const allFilterButton = document.querySelector('[data-filter="all"]');
@@ -195,9 +282,15 @@ document.addEventListener('DOMContentLoaded', function() {
             let filteredItems;
             
             if (filterValue === 'all') {
-                filteredItems = galleryItems;
+                // For "all" category, include regular items plus the general download item
+                filteredItems = enhancedGalleryItems.filter(item => 
+                    !item.isDownloadItem || item.category === 'all'
+                );
             } else {
-                filteredItems = galleryItems.filter(item => item.category === filterValue);
+                // For specific categories, include category items plus that category's download item
+                filteredItems = enhancedGalleryItems.filter(item => 
+                    item.category === filterValue
+                );
             }
             
             // Delay populating gallery to sync with animation
@@ -257,15 +350,19 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentImageIndex = 0;
     
     function openModal(item) {
+        // Don't open modal for download items
+        if (item.isDownloadItem) return;
+        
         modal.style.display = 'block';
         modalImg.src = item.image;
         modalCaption.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`;
         
-        // Find the index of current item
-        currentImageIndex = currentGalleryItems.findIndex(i => i.id === item.id);
+        // Find the index of current item among regular items only
+        const regularItems = currentGalleryItems.filter(i => !i.isDownloadItem);
+        currentImageIndex = regularItems.findIndex(i => i.id === item.id);
         
         // Update navigation buttons state
-        updateNavigationButtons();
+        updateNavigationButtons(regularItems);
         
         // Add keyboard navigation
         document.addEventListener('keydown', handleKeyboardNav);
@@ -278,36 +375,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Update navigation buttons based on current index
-    function updateNavigationButtons() {
-        if (currentGalleryItems.length <= 1) {
+    function updateNavigationButtons(items) {
+        const regularItems = items || currentGalleryItems.filter(i => !i.isDownloadItem);
+        
+        if (regularItems.length <= 1) {
             prevBtn.style.display = 'none';
             nextBtn.style.display = 'none';
             return;
         }
         
         prevBtn.style.display = currentImageIndex === 0 ? 'none' : 'block';
-        nextBtn.style.display = currentImageIndex === currentGalleryItems.length - 1 ? 'none' : 'block';
+        nextBtn.style.display = currentImageIndex === regularItems.length - 1 ? 'none' : 'block';
     }
     
     // Navigate to previous image
     function navigatePrev() {
+        const regularItems = currentGalleryItems.filter(i => !i.isDownloadItem);
         if (currentImageIndex > 0) {
             currentImageIndex--;
-            const item = currentGalleryItems[currentImageIndex];
+            const item = regularItems[currentImageIndex];
             modalImg.src = item.image;
             modalCaption.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`;
-            updateNavigationButtons();
+            updateNavigationButtons(regularItems);
         }
     }
     
     // Navigate to next image
     function navigateNext() {
-        if (currentImageIndex < currentGalleryItems.length - 1) {
+        const regularItems = currentGalleryItems.filter(i => !i.isDownloadItem);
+        if (currentImageIndex < regularItems.length - 1) {
             currentImageIndex++;
-            const item = currentGalleryItems[currentImageIndex];
+            const item = regularItems[currentImageIndex];
             modalImg.src = item.image;
             modalCaption.innerHTML = `<h3>${item.title}</h3><p>${item.description}</p>`;
-            updateNavigationButtons();
+            updateNavigationButtons(regularItems);
         }
     }
     
@@ -383,23 +484,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Modified parallax effect for hero section to be more browser-friendly
-const hero = document.querySelector('.hero');
-if (hero) {
-    // Store original background position
-    const originalBackgroundPosition = window.getComputedStyle(hero).backgroundPosition;
-    
-    // Use transform instead of backgroundPositionY for better performance
-    window.addEventListener('scroll', function() {
-        // Use requestAnimationFrame to optimize scroll performance
-        window.requestAnimationFrame(() => {
-            const scrollPosition = window.pageYOffset;
-            
-            // Use transform: translate3d for hardware acceleration instead of changing background position
-            hero.style.transform = `translate3d(0, 0, 0)`; // Force hardware acceleration
-            hero.style.backgroundPositionY = `calc(${originalBackgroundPosition.split(' ')[1]} + ${scrollPosition * 0.3}px)`;
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        // Store original background position
+        const originalBackgroundPosition = window.getComputedStyle(hero).backgroundPosition;
+        
+        // Use transform instead of backgroundPositionY for better performance
+        window.addEventListener('scroll', function() {
+            // Use requestAnimationFrame to optimize scroll performance
+            window.requestAnimationFrame(() => {
+                const scrollPosition = window.pageYOffset;
+                
+                // Use transform: translate3d for hardware acceleration instead of changing background position
+                hero.style.transform = `translate3d(0, 0, 0)`; // Force hardware acceleration
+                hero.style.backgroundPositionY = `calc(${originalBackgroundPosition.split(' ')[1]} + ${scrollPosition * 0.3}px)`;
+            });
         });
-    });
-}
+    }
     
     // Testimonials slider
     const testimonialSlider = document.querySelector('.testimonial-slider');
@@ -572,4 +673,93 @@ if (hero) {
             // You can implement the same EmailJS functionality here if needed
         });
     }
+
+    // Add CSS for download items with updated styling
+    const addDownloadItemStyles = () => {
+        const styleElement = document.createElement('style');
+        styleElement.textContent = `
+            /* Styling for download items */
+            .gallery-item.download-item {
+                position: relative;
+                overflow: hidden;
+                background-color: rgba(0, 0, 0, 0.05);
+                transition: all 0.3s ease;
+            }
+            
+            .gallery-item.download-item:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            }
+            
+            .download-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 0; /* Remove padding */
+                text-align: center;
+            }
+            
+            .download-container img {
+                width: 100%; /* Make image fill container width */
+                height: 100%; /* Make image fill container height */
+                object-fit: cover; /* Maintain aspect ratio and cover container */
+                margin-bottom: 0; /* Remove margin */
+                opacity: 1;
+                transition: all 0.3s ease;
+            }
+            
+            .download-container .overlay {
+                position: absolute; /* Position absolutely */
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+                color: white;
+                opacity: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .download-btn {
+                display: inline-block;
+                margin-top: 15px;
+                padding: 10px 20px;
+                background-color: #e74c3c;
+                color: white;
+                text-decoration: none;
+                border-radius: 4px;
+                font-weight: bold;
+                transition: all 0.2s ease;
+            }
+            
+            .download-btn:hover {
+                background-color: #c0392b;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            
+            /* Batman theme adjustments */
+            .batman-theme .download-btn {
+                background-color: #e74c3c;
+            }
+            
+            .batman-theme .download-btn:hover {
+                background-color: #ff5e4d;
+            }
+        `;
+        document.head.appendChild(styleElement);
+    };
+    
+    // Add the download item styles
+    addDownloadItemStyles();
 });
