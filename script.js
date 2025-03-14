@@ -1291,97 +1291,13 @@ document.addEventListener('DOMContentLoaded', function() {
         item.style.scrollSnapAlign = 'start';
     });
 });
-// Enhanced Gallery Navigation with Optimized Image Loading
+// Enhanced Gallery Navigation
 document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.querySelector('.gallery-grid');
     const prevBtn = document.querySelector('.gallery-prev');
     const nextBtn = document.querySelector('.gallery-next');
     
     if (!galleryGrid) return; // Exit if grid not found
-    
-    // ====== IMAGE LOADING OPTIMIZATION ======
-    
-    // Preload adjacent images to improve perceived loading speed
-    function preloadAdjacentImages(currentIndex) {
-        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-        const totalItems = galleryItems.length;
-        
-        // Define which images to preload (current, next, previous, next+1, prev-1)
-        const indicesToPreload = [
-            currentIndex,
-            currentIndex + 1,
-            currentIndex - 1,
-            currentIndex + 2,
-            currentIndex - 2
-        ];
-        
-        indicesToPreload.forEach(index => {
-            if (index >= 0 && index < totalItems) {
-                const item = galleryItems[index];
-                const images = item.querySelectorAll('img');
-                const backgroundImages = item.querySelectorAll('[style*="background-image"]');
-                
-                // Preload regular images
-                images.forEach(img => {
-                    if (img.dataset.src && !img.src) {
-                        // If using lazy loading with data-src
-                        img.src = img.dataset.src;
-                    } else if (!img.complete) {
-                        // Force load if not complete
-                        const newImg = new Image();
-                        newImg.src = img.src;
-                    }
-                    
-                    // Set loading priority
-                    img.loading = index === currentIndex ? 'eager' : 'high';
-                    
-                    // Set fetchpriority attribute for modern browsers
-                    img.setAttribute('fetchpriority', index === currentIndex ? 'high' : 'auto');
-                });
-                
-                // Handle background images
-                backgroundImages.forEach(el => {
-                    const style = window.getComputedStyle(el);
-                    const url = style.backgroundImage.slice(4, -1).replace(/"/g, "");
-                    
-                    if (url && url !== 'none') {
-                        const img = new Image();
-                        img.src = url;
-                    }
-                });
-            }
-        });
-    }
-    
-    // Function to optimize all images in the gallery
-    function optimizeGalleryImages() {
-        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-        
-        galleryItems.forEach((item, index) => {
-            const images = item.querySelectorAll('img');
-            
-            images.forEach(img => {
-                // Set appropriate loading attribute
-                img.loading = index < 3 ? 'eager' : 'lazy';
-                
-                // Set fetchpriority attribute for modern browsers
-                img.setAttribute('fetchpriority', index < 3 ? 'high' : 'auto');
-                
-                // Apply size optimization if not already sized
-                if (!img.width && !img.height && !img.style.width && !img.style.height) {
-                    img.style.maxWidth = '100%';
-                    img.style.height = 'auto';
-                }
-                
-                // Decode images asynchronously
-                if ('decode' in img) {
-                    img.decode().catch(() => {});
-                }
-            });
-        });
-    }
-    
-    // ====== CORE GALLERY FUNCTIONALITY ======
     
     // Function to get gallery item width (including margins/padding)
     function getGalleryItemWidth() {
@@ -1396,68 +1312,28 @@ document.addEventListener('DOMContentLoaded', function() {
         return width + marginLeft + marginRight;
     }
     
-    // Calculate total items and current index
-    function getCurrentIndex() {
+    // Function to scroll to the next full item
+    function scrollToNextItem() {
         const itemWidth = getGalleryItemWidth();
         const currentScroll = galleryGrid.scrollLeft;
-        return Math.round(currentScroll / itemWidth);
-    }
-    
-    function getTotalItems() {
-        return galleryGrid.querySelectorAll('.gallery-item').length;
-    }
-    
-    // Improved scroll functions to navigate precisely to the next/previous item
-    function scrollToIndex(index) {
-        const itemWidth = getGalleryItemWidth();
-        const totalItems = getTotalItems();
-        const safeIndex = Math.max(0, Math.min(index, totalItems - 1));
+        const targetScroll = Math.ceil(currentScroll / itemWidth) * itemWidth;
         
-        // Preload images before scrolling
-        preloadAdjacentImages(safeIndex);
-        
-        // Use requestAnimationFrame to ensure smooth scrolling
-        requestAnimationFrame(() => {
-            galleryGrid.scrollTo({
-                left: safeIndex * itemWidth,
-                behavior: 'smooth'
-            });
-            
-            // Update button states after animation completes
-            setTimeout(updateNavigationButtons, 300);
+        galleryGrid.scrollTo({
+            left: targetScroll + itemWidth,
+            behavior: 'smooth'
         });
     }
     
-    // Function to scroll to the next item with proper animation
-    function scrollToNextItem() {
-        const currentIndex = getCurrentIndex();
-        scrollToIndex(currentIndex + 1);
-    }
-    
-    // Function to scroll to the previous item with proper animation
+    // Function to scroll to the previous full item
     function scrollToPrevItem() {
-        const currentIndex = getCurrentIndex();
-        scrollToIndex(currentIndex - 1);
-    }
-    
-    // Function to update navigation button states
-    function updateNavigationButtons() {
-        if (!prevBtn || !nextBtn) return;
+        const itemWidth = getGalleryItemWidth();
+        const currentScroll = galleryGrid.scrollLeft;
+        const targetScroll = Math.floor(currentScroll / itemWidth) * itemWidth;
         
-        const currentIndex = getCurrentIndex();
-        const totalItems = getTotalItems();
-        
-        const isAtStart = currentIndex <= 0;
-        const isAtEnd = currentIndex >= totalItems - 1;
-        
-        prevBtn.style.opacity = isAtStart ? '0.5' : '1';
-        prevBtn.style.pointerEvents = isAtStart ? 'none' : 'auto';
-        
-        nextBtn.style.opacity = isAtEnd ? '0.5' : '1';
-        nextBtn.style.pointerEvents = isAtEnd ? 'none' : 'auto';
-        
-        // Preload images for current position
-        preloadAdjacentImages(currentIndex);
+        galleryGrid.scrollTo({
+            left: targetScroll - itemWidth,
+            behavior: 'smooth'
+        });
     }
     
     // Button event listeners
@@ -1471,124 +1347,40 @@ document.addEventListener('DOMContentLoaded', function() {
         prevBtn.addEventListener('click', scrollToPrevItem);
     }
     
-    // Improved swipe functionality for mobile with better handling
+    // Add swipe functionality for mobile
     let touchStartX = 0;
     let touchEndX = 0;
-    let touchStartY = 0;
-    let touchEndY = 0;
-    let touchStartTime = 0;
-    let isScrolling = false;
-    let isSwiping = false;
     const swipeThreshold = 50; // minimum distance required for a swipe
-    const swipeTimeThreshold = 300; // maximum time for a swipe in milliseconds
     
     galleryGrid.addEventListener('touchstart', function(e) {
         touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-        touchStartTime = Date.now();
-        isScrolling = false;
-        isSwiping = false;
-        
-        // Preload images in anticipation of swipe
-        preloadAdjacentImages(getCurrentIndex());
-    }, { passive: true });
-    
-    galleryGrid.addEventListener('touchmove', function(e) {
-        // Prevent unintended scrolling during horizontal swipe
-        const currentX = e.changedTouches[0].screenX;
-        const currentY = e.changedTouches[0].screenY;
-        const horizontalDistance = Math.abs(currentX - touchStartX);
-        const verticalDistance = Math.abs(currentY - touchStartY);
-        
-        // Detect vertical scrolling
-        if (verticalDistance > horizontalDistance) {
-            isScrolling = true;
-        } else if (horizontalDistance > 10) {
-            // If horizontal distance is significant, we're swiping
-            isSwiping = true;
-            
-            // Preload images in the direction of the swipe
-            const currentIndex = getCurrentIndex();
-            if (currentX < touchStartX) {
-                // Swiping left, preload next images
-                preloadAdjacentImages(currentIndex + 1);
-            } else {
-                // Swiping right, preload previous images
-                preloadAdjacentImages(currentIndex - 1);
-            }
-        }
     }, { passive: true });
     
     galleryGrid.addEventListener('touchend', function(e) {
-        // Don't handle swipes if user was scrolling vertically
-        if (isScrolling || !isSwiping) return;
-        
         touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
-        const touchEndTime = Date.now();
-        const swipeTime = touchEndTime - touchStartTime;
-        
-        // Process swipe with improved detection
-        handleSwipe(swipeTime);
+        handleSwipe();
     }, { passive: true });
     
-    function handleSwipe(swipeTime) {
+    function handleSwipe() {
         const swipeDistance = touchEndX - touchStartX;
-        const verticalDistance = Math.abs(touchEndY - touchStartY);
-        const swipeSpeed = Math.abs(swipeDistance) / swipeTime;
         
-        // Ignore diagonal swipes
-        if (verticalDistance > Math.abs(swipeDistance) * 0.8) return;
-        
-        // Fast swipes can have a lower threshold
-        const dynamicThreshold = swipeSpeed > 1 ? swipeThreshold * 0.7 : swipeThreshold;
-        
-        if (swipeDistance > dynamicThreshold && swipeTime < swipeTimeThreshold) {
+        if (swipeDistance > swipeThreshold) {
             // Swiped right - go to previous
             scrollToPrevItem();
-        } else if (swipeDistance < -dynamicThreshold && swipeTime < swipeTimeThreshold) {
+        } else if (swipeDistance < -swipeThreshold) {
             // Swiped left - go to next
             scrollToNextItem();
-        } else {
-            // If not a clear swipe, snap to the nearest item
-            const currentIndex = getCurrentIndex();
-            scrollToIndex(currentIndex);
         }
     }
     
-    // Ensure proper snap alignment after any scroll ends
-    galleryGrid.addEventListener('scroll', function() {
-        clearTimeout(galleryGrid.scrollTimeout);
-        galleryGrid.scrollTimeout = setTimeout(function() {
-            // Once scrolling stops, ensure we're properly aligned
-            const currentIndex = getCurrentIndex();
-            const itemWidth = getGalleryItemWidth();
-            const expectedScroll = currentIndex * itemWidth;
-            const actualScroll = galleryGrid.scrollLeft;
-            
-            // If we're not aligned properly, adjust
-            if (Math.abs(actualScroll - expectedScroll) > 10) {
-                scrollToIndex(currentIndex);
-            }
-            
-            updateNavigationButtons();
-            
-            // Preload images at the new position
-            preloadAdjacentImages(currentIndex);
-        }, 150);
-    }, { passive: true });
-    
-    // Add CSS for improved snap scrolling and image loading
-    function addOptimizedStyles() {
+    // Add CSS for snap scrolling
+    function addSnapScrollingStyles() {
         const styleElement = document.createElement('style');
         styleElement.textContent = `
             .gallery-grid {
                 scroll-snap-type: x mandatory;
                 scrollbar-width: none; /* Hide scrollbar for Firefox */
                 -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-                scroll-behavior: smooth;
-                -webkit-overflow-scrolling: touch; /* Improve iOS scrolling */
-                will-change: scroll-position; /* Optimize for animations */
             }
             
             .gallery-grid::-webkit-scrollbar {
@@ -1596,22 +1388,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .gallery-item {
-                scroll-snap-align: center; /* Changed to center for better alignment */
-                scroll-snap-stop: always; /* Ensure we stop at each item */
-                user-select: none; /* Prevent text selection during swipe */
-                -webkit-user-select: none;
-                transform: translateZ(0); /* Hardware acceleration */
-                will-change: transform; /* Optimize for animations */
-                contain: layout; /* Improve performance */
-            }
-            
-            /* Optimize images */
-            .gallery-item img {
-                backface-visibility: hidden; /* Prevents flickering */
-                -webkit-backface-visibility: hidden;
-                transform: translateZ(0); /* Hardware acceleration */
-                will-change: transform; /* Optimize for animations */
-                contain: paint; /* Improve performance */
+                scroll-snap-align: start;
             }
             
             /* Ensure gallery container has proper positioning */
@@ -1637,8 +1414,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 justify-content: center;
                 cursor: pointer;
                 font-size: 20px;
-                transition: all 0.3s ease;
-                touch-action: manipulation; /* Improve touch handling */
+                transition: background 0.3s ease;
             }
             
             .gallery-prev:hover, .gallery-next:hover {
@@ -1663,26 +1439,27 @@ document.addEventListener('DOMContentLoaded', function() {
             .batman-theme .gallery-next:hover {
                 background: rgba(231, 76, 60, 1);
             }
-            
-            /* Loading indicator */
-            .gallery-item.loading::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 30px;
-                height: 30px;
-                margin: -15px 0 0 -15px;
-                border: 3px solid rgba(0, 0, 0, 0.1);
-                border-radius: 50%;
-                border-top-color: #000;
-                animation: gallery-loader 0.6s linear infinite;
-            }
-            
-            @keyframes gallery-loader {
-                to { transform: rotate(360deg); }
-            }
         `;
         document.head.appendChild(styleElement);
-    }})
+    }
     
+    // Apply styles
+    addSnapScrollingStyles();
+    
+    // Make sure the gallery container has proper styling
+    const galleryContainer = document.querySelector('.gallery');
+    if (galleryContainer) {
+        galleryContainer.style.position = 'relative';
+        galleryContainer.style.overflow = 'hidden';
+    }
+    
+    // Apply snap alignment to gallery items
+    const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+        item.style.scrollSnapAlign = 'start';
+    });
+    
+    // Replace the default scroll behavior
+    galleryGrid.style.overflowX = 'scroll';
+    galleryGrid.style.scrollSnapType = 'x mandatory';
+});
