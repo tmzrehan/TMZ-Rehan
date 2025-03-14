@@ -1205,3 +1205,260 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 });
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryGrid = document.querySelector('.gallery-grid');
+    const prevBtn = document.querySelector('.gallery-prev');
+    const nextBtn = document.querySelector('.gallery-next');
+    
+    // Function to get gallery item width (including margins/padding)
+    function getGalleryItemWidth() {
+        const firstItem = galleryGrid.querySelector('.gallery-item');
+        if (!firstItem) return 300; // default fallback
+        
+        const itemStyle = window.getComputedStyle(firstItem);
+        const width = firstItem.offsetWidth;
+        const marginLeft = parseInt(itemStyle.marginLeft) || 0;
+        const marginRight = parseInt(itemStyle.marginRight) || 0;
+        
+        return width + marginLeft + marginRight;
+    }
+    
+    // Function to scroll to the next full item
+    function scrollToNextItem() {
+        const itemWidth = getGalleryItemWidth();
+        const currentScroll = galleryGrid.scrollLeft;
+        const targetScroll = Math.ceil(currentScroll / itemWidth) * itemWidth;
+        
+        galleryGrid.scrollTo({
+            left: targetScroll + itemWidth,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Function to scroll to the previous full item
+    function scrollToPrevItem() {
+        const itemWidth = getGalleryItemWidth();
+        const currentScroll = galleryGrid.scrollLeft;
+        const targetScroll = Math.floor(currentScroll / itemWidth) * itemWidth;
+        
+        galleryGrid.scrollTo({
+            left: targetScroll - itemWidth,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Button event listeners
+    if (nextBtn) {
+        nextBtn.addEventListener('click', scrollToNextItem);
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', scrollToPrevItem);
+    }
+    
+    // Add swipe functionality for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const swipeThreshold = 50; // minimum distance required for a swipe
+    
+    galleryGrid.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    galleryGrid.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const swipeDistance = touchEndX - touchStartX;
+        
+        if (swipeDistance > swipeThreshold) {
+            // Swiped right - go to previous
+            scrollToPrevItem();
+        } else if (swipeDistance < -swipeThreshold) {
+            // Swiped left - go to next
+            scrollToNextItem();
+        }
+    }
+    
+    // Add CSS snap scrolling for better UX
+    galleryGrid.style.scrollSnapType = 'x mandatory';
+    
+    // Apply snap alignment to gallery items
+    const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+        item.style.scrollSnapAlign = 'start';
+    });
+});// Enhanced Gallery Navigation
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryGrid = document.querySelector('.gallery-grid');
+    const prevBtn = document.querySelector('.gallery-prev');
+    const nextBtn = document.querySelector('.gallery-next');
+    
+    if (!galleryGrid) return; // Exit if grid not found
+    
+    // Function to get gallery item width (including margins/padding)
+    function getGalleryItemWidth() {
+        const firstItem = galleryGrid.querySelector('.gallery-item');
+        if (!firstItem) return 300; // default fallback
+        
+        const itemStyle = window.getComputedStyle(firstItem);
+        const width = firstItem.offsetWidth;
+        const marginLeft = parseInt(itemStyle.marginLeft) || 0;
+        const marginRight = parseInt(itemStyle.marginRight) || 0;
+        
+        return width + marginLeft + marginRight;
+    }
+    
+    // Function to scroll to the next full item
+    function scrollToNextItem() {
+        const itemWidth = getGalleryItemWidth();
+        const currentScroll = galleryGrid.scrollLeft;
+        const targetScroll = Math.ceil(currentScroll / itemWidth) * itemWidth;
+        
+        galleryGrid.scrollTo({
+            left: targetScroll + itemWidth,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Function to scroll to the previous full item
+    function scrollToPrevItem() {
+        const itemWidth = getGalleryItemWidth();
+        const currentScroll = galleryGrid.scrollLeft;
+        const targetScroll = Math.floor(currentScroll / itemWidth) * itemWidth;
+        
+        galleryGrid.scrollTo({
+            left: targetScroll - itemWidth,
+            behavior: 'smooth'
+        });
+    }
+    
+    // Button event listeners
+    if (nextBtn) {
+        nextBtn.removeEventListener('click', nextBtn.onclick);
+        nextBtn.addEventListener('click', scrollToNextItem);
+    }
+    
+    if (prevBtn) {
+        prevBtn.removeEventListener('click', prevBtn.onclick);
+        prevBtn.addEventListener('click', scrollToPrevItem);
+    }
+    
+    // Add swipe functionality for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const swipeThreshold = 50; // minimum distance required for a swipe
+    
+    galleryGrid.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    galleryGrid.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const swipeDistance = touchEndX - touchStartX;
+        
+        if (swipeDistance > swipeThreshold) {
+            // Swiped right - go to previous
+            scrollToPrevItem();
+        } else if (swipeDistance < -swipeThreshold) {
+            // Swiped left - go to next
+            scrollToNextItem();
+        }
+    }
+    
+    // Add CSS for snap scrolling
+    function addSnapScrollingStyles() {
+        const styleElement = document.createElement('style');
+        styleElement.textContent = `
+            .gallery-grid {
+                scroll-snap-type: x mandatory;
+                scrollbar-width: none; /* Hide scrollbar for Firefox */
+                -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+            }
+            
+            .gallery-grid::-webkit-scrollbar {
+                display: none; /* Hide scrollbar for Chrome/Safari/Opera */
+            }
+            
+            .gallery-item {
+                scroll-snap-align: start;
+            }
+            
+            /* Ensure gallery container has proper positioning */
+            .gallery-container {
+                position: relative;
+                overflow: hidden;
+            }
+            
+            /* Improve navigation buttons */
+            .gallery-prev, .gallery-next {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                z-index: 10;
+                background: rgba(0, 0, 0, 0.5);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                font-size: 20px;
+                transition: background 0.3s ease;
+            }
+            
+            .gallery-prev:hover, .gallery-next:hover {
+                background: rgba(0, 0, 0, 0.8);
+            }
+            
+            .gallery-prev {
+                left: 10px;
+            }
+            
+            .gallery-next {
+                right: 10px;
+            }
+            
+            /* Batman theme adjustments */
+            .batman-theme .gallery-prev, 
+            .batman-theme .gallery-next {
+                background: rgba(231, 76, 60, 0.7);
+            }
+            
+            .batman-theme .gallery-prev:hover, 
+            .batman-theme .gallery-next:hover {
+                background: rgba(231, 76, 60, 1);
+            }
+        `;
+        document.head.appendChild(styleElement);
+    }
+    
+    // Apply styles
+    addSnapScrollingStyles();
+    
+    // Make sure the gallery container has proper styling
+    const galleryContainer = document.querySelector('.gallery');
+    if (galleryContainer) {
+        galleryContainer.style.position = 'relative';
+        galleryContainer.style.overflow = 'hidden';
+    }
+    
+    // Apply snap alignment to gallery items
+    const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+        item.style.scrollSnapAlign = 'start';
+    });
+    
+    // Replace the default scroll behavior
+    galleryGrid.style.overflowX = 'scroll';
+    galleryGrid.style.scrollSnapType = 'x mandatory';
+});
