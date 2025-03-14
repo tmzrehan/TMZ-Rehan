@@ -1312,47 +1312,56 @@ document.addEventListener('DOMContentLoaded', function() {
         return width + marginLeft + marginRight;
     }
     
-    // Function to scroll to the next item with proper animation duration
-    function scrollToNextItem() {
+    // Calculate total items and current index
+    function getCurrentIndex() {
         const itemWidth = getGalleryItemWidth();
         const currentScroll = galleryGrid.scrollLeft;
-        const visibleWidth = galleryGrid.clientWidth;
-        
-        // Calculate the position of the next fully visible item
-        const nextItemPosition = Math.floor(currentScroll / itemWidth) * itemWidth + itemWidth;
-        
-        galleryGrid.scrollTo({
-            left: nextItemPosition,
-            behavior: 'smooth'
-        });
-        
-        // Update button states
-        updateNavigationButtons();
+        return Math.round(currentScroll / itemWidth);
     }
     
-    // Function to scroll to the previous item with proper animation duration
-    function scrollToPrevItem() {
+    function getTotalItems() {
+        return galleryGrid.querySelectorAll('.gallery-item').length;
+    }
+    
+    // Improved scroll functions to navigate precisely to the next/previous item
+    function scrollToIndex(index) {
         const itemWidth = getGalleryItemWidth();
-        const currentScroll = galleryGrid.scrollLeft;
+        const totalItems = getTotalItems();
+        const safeIndex = Math.max(0, Math.min(index, totalItems - 1));
         
-        // Calculate the position of the previous fully visible item
-        const prevItemPosition = Math.ceil(currentScroll / itemWidth - 1) * itemWidth;
-        
-        galleryGrid.scrollTo({
-            left: Math.max(0, prevItemPosition),
-            behavior: 'smooth'
+        // Use requestAnimationFrame to ensure smooth scrolling
+        requestAnimationFrame(() => {
+            galleryGrid.scrollTo({
+                left: safeIndex * itemWidth,
+                behavior: 'smooth'
+            });
+            
+            // Update button states after animation completes
+            setTimeout(updateNavigationButtons, 300);
         });
-        
-        // Update button states
-        updateNavigationButtons();
+    }
+    
+    // Function to scroll to the next item with proper animation
+    function scrollToNextItem() {
+        const currentIndex = getCurrentIndex();
+        scrollToIndex(currentIndex + 1);
+    }
+    
+    // Function to scroll to the previous item with proper animation
+    function scrollToPrevItem() {
+        const currentIndex = getCurrentIndex();
+        scrollToIndex(currentIndex - 1);
     }
     
     // Function to update navigation button states
     function updateNavigationButtons() {
         if (!prevBtn || !nextBtn) return;
         
-        const isAtStart = galleryGrid.scrollLeft === 0;
-        const isAtEnd = galleryGrid.scrollLeft + galleryGrid.clientWidth >= galleryGrid.scrollWidth - 5; // 5px buffer
+        const currentIndex = getCurrentIndex();
+        const totalItems = getTotalItems();
+        
+        const isAtStart = currentIndex <= 0;
+        const isAtEnd = currentIndex >= totalItems - 1;
         
         prevBtn.style.opacity = isAtStart ? '0.5' : '1';
         prevBtn.style.pointerEvents = isAtStart ? 'none' : 'auto';
@@ -1372,60 +1381,96 @@ document.addEventListener('DOMContentLoaded', function() {
         prevBtn.addEventListener('click', scrollToPrevItem);
     }
     
-    // Improved swipe functionality for mobile with debounce
+    // Improved swipe functionality for mobile with better handling
     let touchStartX = 0;
     let touchEndX = 0;
     let touchStartY = 0;
     let touchEndY = 0;
+    let touchStartTime = 0;
     let isScrolling = false;
-    let lastSwipeTime = 0;
+    let isSwiping = false;
     const swipeThreshold = 50; // minimum distance required for a swipe
-    const swipeCooldown = 300; // milliseconds to wait between swipes
+    const swipeTimeThreshold = 300; // maximum time for a swipe in milliseconds
     
     galleryGrid.addEventListener('touchstart', function(e) {
         touchStartX = e.changedTouches[0].screenX;
         touchStartY = e.changedTouches[0].screenY;
+        touchStartTime = Date.now();
         isScrolling = false;
+        isSwiping = false;
     }, { passive: true });
     
     galleryGrid.addEventListener('touchmove', function(e) {
-        // Detect if user is scrolling vertically
+        // Prevent unintended scrolling during horizontal swipe
+        const currentX = e.changedTouches[0].screenX;
         const currentY = e.changedTouches[0].screenY;
-        if (Math.abs(currentY - touchStartY) > Math.abs(e.changedTouches[0].screenX - touchStartX)) {
+        const horizontalDistance = Math.abs(currentX - touchStartX);
+        const verticalDistance = Math.abs(currentY - touchStartY);
+        
+        // Detect vertical scrolling
+        if (verticalDistance > horizontalDistance) {
             isScrolling = true;
+        } else if (horizontalDistance > 10) {
+            // If horizontal distance is significant, we're swiping
+            isSwiping = true;
         }
     }, { passive: true });
     
     galleryGrid.addEventListener('touchend', function(e) {
         // Don't handle swipes if user was scrolling vertically
-        if (isScrolling) return;
+        if (isScrolling || !isSwiping) return;
         
         touchEndX = e.changedTouches[0].screenX;
         touchEndY = e.changedTouches[0].screenY;
+        const touchEndTime = Date.now();
+        const swipeTime = touchEndTime - touchStartTime;
         
-        // Add debounce to prevent accidental double swipes
-        const now = Date.now();
-        if (now - lastSwipeTime > swipeCooldown) {
-            handleSwipe();
-            lastSwipeTime = now;
-        }
+        // Process swipe with improved detection
+        handleSwipe(swipeTime);
     }, { passive: true });
     
-    function handleSwipe() {
+    function handleSwipe(swipeTime) {
         const swipeDistance = touchEndX - touchStartX;
         const verticalDistance = Math.abs(touchEndY - touchStartY);
+        const swipeSpeed = Math.abs(swipeDistance) / swipeTime;
         
         // Ignore diagonal swipes
-        if (verticalDistance > swipeDistance * 0.8) return;
+        if (verticalDistance > Math.abs(swipeDistance) * 0.8) return;
         
-        if (swipeDistance > swipeThreshold) {
+        // Fast swipes can have a lower threshold
+        const dynamicThreshold = swipeSpeed > 1 ? swipeThreshold * 0.7 : swipeThreshold;
+        
+        if (swipeDistance > dynamicThreshold && swipeTime < swipeTimeThreshold) {
             // Swiped right - go to previous
             scrollToPrevItem();
-        } else if (swipeDistance < -swipeThreshold) {
+        } else if (swipeDistance < -dynamicThreshold && swipeTime < swipeTimeThreshold) {
             // Swiped left - go to next
             scrollToNextItem();
+        } else {
+            // If not a clear swipe, snap to the nearest item
+            const currentIndex = getCurrentIndex();
+            scrollToIndex(currentIndex);
         }
     }
+    
+    // Ensure proper snap alignment after any scroll ends
+    galleryGrid.addEventListener('scroll', function() {
+        clearTimeout(galleryGrid.scrollTimeout);
+        galleryGrid.scrollTimeout = setTimeout(function() {
+            // Once scrolling stops, ensure we're properly aligned
+            const currentIndex = getCurrentIndex();
+            const itemWidth = getGalleryItemWidth();
+            const expectedScroll = currentIndex * itemWidth;
+            const actualScroll = galleryGrid.scrollLeft;
+            
+            // If we're not aligned properly, adjust
+            if (Math.abs(actualScroll - expectedScroll) > 10) {
+                scrollToIndex(currentIndex);
+            }
+            
+            updateNavigationButtons();
+        }, 150);
+    }, { passive: true });
     
     // Add CSS for improved snap scrolling
     function addSnapScrollingStyles() {
@@ -1436,6 +1481,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 scrollbar-width: none; /* Hide scrollbar for Firefox */
                 -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
                 scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch; /* Improve iOS scrolling */
             }
             
             .gallery-grid::-webkit-scrollbar {
@@ -1443,8 +1489,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             .gallery-item {
-                scroll-snap-align: start;
+                scroll-snap-align: center; /* Changed to center for better alignment */
                 scroll-snap-stop: always; /* Ensure we stop at each item */
+                user-select: none; /* Prevent text selection during swipe */
+                -webkit-user-select: none;
             }
             
             /* Ensure gallery container has proper positioning */
@@ -1471,6 +1519,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cursor: pointer;
                 font-size: 20px;
                 transition: all 0.3s ease;
+                touch-action: manipulation; /* Improve touch handling */
             }
             
             .gallery-prev:hover, .gallery-next:hover {
@@ -1512,15 +1561,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Apply snap alignment to gallery items
     const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
     galleryItems.forEach(item => {
-        item.style.scrollSnapAlign = 'start';
+        item.style.scrollSnapAlign = 'center'; // Changed to center for better alignment
         item.style.scrollSnapStop = 'always';
     });
     
-    // Add scroll event listener to update buttons
-    galleryGrid.addEventListener('scroll', function() {
-        updateNavigationButtons();
-    }, { passive: true });
+    // Fix for Safari/iOS momentum scrolling issues
+    if (navigator.userAgent.match(/iPad|iPhone|iPod/)) {
+        galleryGrid.style.WebkitOverflowScrolling = 'touch';
+    }
     
     // Initial update of buttons
     updateNavigationButtons();
+    
+    // Force a layout recalculation to ensure everything is properly sized
+    setTimeout(() => {
+        galleryGrid.style.display = 'none';
+        galleryGrid.offsetHeight; // Force reflow
+        galleryGrid.style.display = '';
+        updateNavigationButtons();
+    }, 100);
 });
