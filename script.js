@@ -1291,13 +1291,97 @@ document.addEventListener('DOMContentLoaded', function() {
         item.style.scrollSnapAlign = 'start';
     });
 });
-// Enhanced Gallery Navigation with Improved Swipe Handling
+// Enhanced Gallery Navigation with Optimized Image Loading
 document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.querySelector('.gallery-grid');
     const prevBtn = document.querySelector('.gallery-prev');
     const nextBtn = document.querySelector('.gallery-next');
     
     if (!galleryGrid) return; // Exit if grid not found
+    
+    // ====== IMAGE LOADING OPTIMIZATION ======
+    
+    // Preload adjacent images to improve perceived loading speed
+    function preloadAdjacentImages(currentIndex) {
+        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+        const totalItems = galleryItems.length;
+        
+        // Define which images to preload (current, next, previous, next+1, prev-1)
+        const indicesToPreload = [
+            currentIndex,
+            currentIndex + 1,
+            currentIndex - 1,
+            currentIndex + 2,
+            currentIndex - 2
+        ];
+        
+        indicesToPreload.forEach(index => {
+            if (index >= 0 && index < totalItems) {
+                const item = galleryItems[index];
+                const images = item.querySelectorAll('img');
+                const backgroundImages = item.querySelectorAll('[style*="background-image"]');
+                
+                // Preload regular images
+                images.forEach(img => {
+                    if (img.dataset.src && !img.src) {
+                        // If using lazy loading with data-src
+                        img.src = img.dataset.src;
+                    } else if (!img.complete) {
+                        // Force load if not complete
+                        const newImg = new Image();
+                        newImg.src = img.src;
+                    }
+                    
+                    // Set loading priority
+                    img.loading = index === currentIndex ? 'eager' : 'high';
+                    
+                    // Set fetchpriority attribute for modern browsers
+                    img.setAttribute('fetchpriority', index === currentIndex ? 'high' : 'auto');
+                });
+                
+                // Handle background images
+                backgroundImages.forEach(el => {
+                    const style = window.getComputedStyle(el);
+                    const url = style.backgroundImage.slice(4, -1).replace(/"/g, "");
+                    
+                    if (url && url !== 'none') {
+                        const img = new Image();
+                        img.src = url;
+                    }
+                });
+            }
+        });
+    }
+    
+    // Function to optimize all images in the gallery
+    function optimizeGalleryImages() {
+        const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
+        
+        galleryItems.forEach((item, index) => {
+            const images = item.querySelectorAll('img');
+            
+            images.forEach(img => {
+                // Set appropriate loading attribute
+                img.loading = index < 3 ? 'eager' : 'lazy';
+                
+                // Set fetchpriority attribute for modern browsers
+                img.setAttribute('fetchpriority', index < 3 ? 'high' : 'auto');
+                
+                // Apply size optimization if not already sized
+                if (!img.width && !img.height && !img.style.width && !img.style.height) {
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                }
+                
+                // Decode images asynchronously
+                if ('decode' in img) {
+                    img.decode().catch(() => {});
+                }
+            });
+        });
+    }
+    
+    // ====== CORE GALLERY FUNCTIONALITY ======
     
     // Function to get gallery item width (including margins/padding)
     function getGalleryItemWidth() {
@@ -1328,6 +1412,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const itemWidth = getGalleryItemWidth();
         const totalItems = getTotalItems();
         const safeIndex = Math.max(0, Math.min(index, totalItems - 1));
+        
+        // Preload images before scrolling
+        preloadAdjacentImages(safeIndex);
         
         // Use requestAnimationFrame to ensure smooth scrolling
         requestAnimationFrame(() => {
@@ -1368,6 +1455,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         nextBtn.style.opacity = isAtEnd ? '0.5' : '1';
         nextBtn.style.pointerEvents = isAtEnd ? 'none' : 'auto';
+        
+        // Preload images for current position
+        preloadAdjacentImages(currentIndex);
     }
     
     // Button event listeners
@@ -1398,6 +1488,9 @@ document.addEventListener('DOMContentLoaded', function() {
         touchStartTime = Date.now();
         isScrolling = false;
         isSwiping = false;
+        
+        // Preload images in anticipation of swipe
+        preloadAdjacentImages(getCurrentIndex());
     }, { passive: true });
     
     galleryGrid.addEventListener('touchmove', function(e) {
@@ -1413,6 +1506,16 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (horizontalDistance > 10) {
             // If horizontal distance is significant, we're swiping
             isSwiping = true;
+            
+            // Preload images in the direction of the swipe
+            const currentIndex = getCurrentIndex();
+            if (currentX < touchStartX) {
+                // Swiping left, preload next images
+                preloadAdjacentImages(currentIndex + 1);
+            } else {
+                // Swiping right, preload previous images
+                preloadAdjacentImages(currentIndex - 1);
+            }
         }
     }, { passive: true });
     
@@ -1469,11 +1572,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             updateNavigationButtons();
+            
+            // Preload images at the new position
+            preloadAdjacentImages(currentIndex);
         }, 150);
     }, { passive: true });
     
-    // Add CSS for improved snap scrolling
-    function addSnapScrollingStyles() {
+    // Add CSS for improved snap scrolling and image loading
+    function addOptimizedStyles() {
         const styleElement = document.createElement('style');
         styleElement.textContent = `
             .gallery-grid {
@@ -1482,6 +1588,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
                 scroll-behavior: smooth;
                 -webkit-overflow-scrolling: touch; /* Improve iOS scrolling */
+                will-change: scroll-position; /* Optimize for animations */
             }
             
             .gallery-grid::-webkit-scrollbar {
@@ -1493,6 +1600,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 scroll-snap-stop: always; /* Ensure we stop at each item */
                 user-select: none; /* Prevent text selection during swipe */
                 -webkit-user-select: none;
+                transform: translateZ(0); /* Hardware acceleration */
+                will-change: transform; /* Optimize for animations */
+                contain: layout; /* Improve performance */
+            }
+            
+            /* Optimize images */
+            .gallery-item img {
+                backface-visibility: hidden; /* Prevents flickering */
+                -webkit-backface-visibility: hidden;
+                transform: translateZ(0); /* Hardware acceleration */
+                will-change: transform; /* Optimize for animations */
+                contain: paint; /* Improve performance */
             }
             
             /* Ensure gallery container has proper positioning */
@@ -1544,40 +1663,26 @@ document.addEventListener('DOMContentLoaded', function() {
             .batman-theme .gallery-next:hover {
                 background: rgba(231, 76, 60, 1);
             }
+            
+            /* Loading indicator */
+            .gallery-item.loading::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 30px;
+                height: 30px;
+                margin: -15px 0 0 -15px;
+                border: 3px solid rgba(0, 0, 0, 0.1);
+                border-radius: 50%;
+                border-top-color: #000;
+                animation: gallery-loader 0.6s linear infinite;
+            }
+            
+            @keyframes gallery-loader {
+                to { transform: rotate(360deg); }
+            }
         `;
         document.head.appendChild(styleElement);
-    }
+    }})
     
-    // Apply styles
-    addSnapScrollingStyles();
-    
-    // Make sure the gallery container has proper styling
-    const galleryContainer = galleryGrid.closest('.gallery-container, .gallery');
-    if (galleryContainer) {
-        galleryContainer.style.position = 'relative';
-        galleryContainer.style.overflow = 'hidden';
-    }
-    
-    // Apply snap alignment to gallery items
-    const galleryItems = galleryGrid.querySelectorAll('.gallery-item');
-    galleryItems.forEach(item => {
-        item.style.scrollSnapAlign = 'center'; // Changed to center for better alignment
-        item.style.scrollSnapStop = 'always';
-    });
-    
-    // Fix for Safari/iOS momentum scrolling issues
-    if (navigator.userAgent.match(/iPad|iPhone|iPod/)) {
-        galleryGrid.style.WebkitOverflowScrolling = 'touch';
-    }
-    
-    // Initial update of buttons
-    updateNavigationButtons();
-    
-    // Force a layout recalculation to ensure everything is properly sized
-    setTimeout(() => {
-        galleryGrid.style.display = 'none';
-        galleryGrid.offsetHeight; // Force reflow
-        galleryGrid.style.display = '';
-        updateNavigationButtons();
-    }, 100);
-});
