@@ -25,14 +25,12 @@ body {
     width: 100%;
 }
 
-/* Increase container size for gallery */
 .container {
     max-width: 1400px; /* Increased from 1200px */
     width: 100%;
     margin: 0 auto;
     padding: 0 20px;
 }
-
 @media (max-width: 576px) {
     .container {
         padding: 0 15px;
@@ -151,7 +149,7 @@ a {
 
 .section-header {
     text-align: center;
-    margin-bottom: 60px; /* Increased from 50px */
+    margin-bottom: 50px;
 }
 
 .section-header h2 {
@@ -195,7 +193,6 @@ img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: var(--transition);
 }
 .logo-img {
     width: 40px;
@@ -405,38 +402,25 @@ footer .logo-img {
     transition: background 0s ease;
     background-size: cover;
     background-position: center;
-    padding: 100px 0; /* Increased padding */
 }
 
-/* Make gallery images bigger */
+/* Base styling for all gallery items */
 .gallery-item {
     position: relative;
     overflow: hidden;
     border-radius: 10px;
-    height: 450px; /* Increased height */
-    width: 100%; /* Use full width */
+    height: 280px; /* Ensure uniform height */
+    width: 100%; /* Take up full width */
+    cursor: pointer;
 }
 
-/* Ensure images fill the larger containers */
+/* Make sure all gallery images have these base properties */
 .gallery-item img {
-    width: 100%;
-    height: 100%;
+    width: 200%;
+    height: 200%;
     object-fit: cover;
-    transition: var(--transition);
+    transition: all 0.4s ease;
 }
-
-/* Make grid layout for top row with larger images */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
-    gap: 25px; /* Increased gap between items */
-}
-
-/* Make bottom row 2 columns */
-.gallery-grid:nth-child(2) {
-    grid-template-columns: repeat(2, 1fr);
-}
-
 /* Make the image slightly blurry by default */
 .gallery-grid .gallery-item:last-child img {
     filter: grayscale(30%) blur(3px) brightness(0.9); /* Mild blur by default */
@@ -1284,27 +1268,35 @@ footer {
         font-size: 1.6rem;
     }
     
-    .gallery-item {
-        height: 200px;
-    }
-    
     .about-text h2 {
         font-size: 1.6rem;
     }
 }
-/* Fix for gallery image size on mobile */
-@media (max-width: 768px) {
+@media (max-width: 576px) {
+    /* ... other styles ... */
     .gallery-item {
-      height: 400px; /* Increased height for mobile */
-      width: 100%;   /* Full width for mobile */
+        height: 300px; /* Increased from 220px */
     }
-    
-    /* Make sure the gallery grid is properly structured on mobile */
+}
+@media (max-width: 360px) {
+    /* ... other styles ... */
+    .gallery-item {
+        height: 320px; /* Increased from 200px */
+    }
+}
+@media (max-width: 576px) {
+    /* ... other styles ... */
+    .gallery-item {
+        height: 570px;
+        width: 100%; /* Take full width on mobile */
+        margin-bottom: 20px; /* Add space between items */
+    }
+}
+@media (max-width: 576px) {
+    /* ... other styles ... */
     .gallery-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
     }
-  }
-  
-  
+}
