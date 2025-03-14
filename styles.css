@@ -25,12 +25,14 @@ body {
     width: 100%;
 }
 
+/* Increase container size for gallery */
 .container {
-    max-width: 1200px;
+    max-width: 1400px; /* Increased from 1200px */
     width: 100%;
     margin: 0 auto;
     padding: 0 20px;
 }
+
 @media (max-width: 576px) {
     .container {
         padding: 0 15px;
@@ -149,7 +151,7 @@ a {
 
 .section-header {
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 60px; /* Increased from 50px */
 }
 
 .section-header h2 {
@@ -193,6 +195,7 @@ img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: var(--transition);
 }
 .logo-img {
     width: 40px;
@@ -402,25 +405,38 @@ footer .logo-img {
     transition: background 0s ease;
     background-size: cover;
     background-position: center;
+    padding: 100px 0; /* Increased padding */
 }
 
-/* Base styling for all gallery items */
+/* Make gallery images bigger */
 .gallery-item {
     position: relative;
     overflow: hidden;
     border-radius: 10px;
-    height: 280px; /* Ensure uniform height */
-    width: 100%; /* Take up full width */
-    cursor: pointer;
+    height: 450px; /* Increased height */
+    width: 100%; /* Use full width */
 }
 
-/* Make sure all gallery images have these base properties */
+/* Ensure images fill the larger containers */
 .gallery-item img {
-    width: 200%;
-    height: 200%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    transition: all 0.4s ease;
+    transition: var(--transition);
 }
+
+/* Make grid layout for top row with larger images */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    gap: 25px; /* Increased gap between items */
+}
+
+/* Make bottom row 2 columns */
+.gallery-grid:nth-child(2) {
+    grid-template-columns: repeat(2, 1fr);
+}
+
 /* Make the image slightly blurry by default */
 .gallery-grid .gallery-item:last-child img {
     filter: grayscale(30%) blur(3px) brightness(0.9); /* Mild blur by default */
@@ -439,6 +455,10 @@ footer .logo-img {
     object-fit: cover; /* Ensures it fills the container */
     filter: grayscale(30%) blur(3px) brightness(0.9);
     transition: all 0.4s ease;
+}
+.gallery.category-bikes {
+    background: radial-gradient(circle, rgba(92, 1, 1, 0.171) 0%, transparent 50%), 
+                radial-gradient(circle, rgba(139, 0, 0, 0.404) 10%, transparent 50%);
 }
 
 /* Glossy overlay effect base */
@@ -594,25 +614,100 @@ footer .logo-img {
     background-color: var(--dark-red);
 }
 
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+.gallery {
+    transition: background 0s ease;
+    background-size: cover;
+    background-position: center;
+    padding: 100px 0; /* Increased padding for larger section */
 }
 
+/* Single row gallery without scrollbar */
+.gallery-grid {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    position: relative;
+    width: 100%;
+    overflow: hidden; /* Hide overflow instead of scrolling */
+    padding: 20px 0; /* Add padding around gallery */
+}
+
+/* Larger gallery items with portrait dimensions */
 .gallery-item {
     position: relative;
     overflow: hidden;
     border-radius: 10px;
-    height: 280px;
+    height: 500px; /* Increased height for bigger images */
+    width: 350px; /* Wider width while maintaining portrait feel */
+    flex: 0 0 auto; /* Prevent items from growing/shrinking */
     cursor: pointer;
 }
 
+/* Arrow navigation styling */
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 24px;
+    transition: var(--transition);
+}
+
+.gallery-nav:hover {
+    background-color: rgba(235, 5, 5, 0.6);
+}
+
+.gallery-prev {
+    left: 20px;
+}
+
+.gallery-next {
+    right: 20px;
+}
+
+/* Custom arrow icon */
+.gallery-nav::after {
+    content: "";
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-top: 3px solid white;
+    border-right: 3px solid white;
+}
+
+.gallery-prev::after {
+    transform: rotate(-135deg); /* Points left */
+    margin-left: 5px;
+}
+
+.gallery-next::after {
+    transform: rotate(45deg); /* Points right */
+    margin-right: 5px;
+}
+
+/* Make sure images cover the larger containers */
 .gallery-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: var(--transition);
+}
+
+/* Container for gallery to allow positioning the arrows */
+.gallery-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .gallery-item:hover img {
@@ -1195,5 +1290,124 @@ footer {
     
     .about-text h2 {
         font-size: 1.6rem;
+    }
+}
+/* Gallery Zoom Modal Styles */
+.zoom-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    overflow: hidden;
+}
+
+.zoom-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    height: 85%;
+    overflow: hidden;
+}
+
+.zoom-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center;
+    transition: transform 0.3s ease;
+}
+
+.zoom-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 1001;
+}
+
+.zoom-btn {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: var(--transition);
+}
+
+.zoom-btn:hover {
+    background-color: var(--dark-red);
+}
+
+.close-zoom {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+    transition: color 0.3s ease;
+}
+
+.close-zoom:hover {
+    color: var(--dark-red);
+}
+
+/* Add drag cursor indicator */
+.zoom-img.zoomed {
+    cursor: grab;
+}
+
+.zoom-img.zoomed:active {
+    cursor: grabbing;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    .zoom-controls {
+        bottom: 15px;
+    }
+    
+    .zoom-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+    
+    .close-zoom {
+        font-size: 35px;
+        top: 15px;
+        right: 20px;
+    }
+    
+    .zoom-container {
+        width: 100%;
+        height: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .zoom-controls {
+        bottom: 10px;
+    }
+    
+    .zoom-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
     }
 }
