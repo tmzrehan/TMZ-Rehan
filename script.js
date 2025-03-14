@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             id: 13,
             category: 'event',
-            image: 'images/kannada.png', // Replace with your actual image path
+            image: 'images/event-2.jpg', // Replace with your actual image path
             title: 'Concert',
             description: '',
             showInAll: false // This item will NOT show in the All category
@@ -1199,5 +1199,173 @@ document.addEventListener('DOMContentLoaded', function() {
     // Calculate distance between two points
     function getDistance(x1, y1, x2, y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    }
+});
+// Add this code to your existing JavaScript file or include it as a new script tag
+
+document.addEventListener('DOMContentLoaded', function() {
+    // IMPROVEMENT 1: Make gallery images bigger on mobile
+    const addResponsiveStyles = () => {
+        const styleElement = document.createElement('style');
+        styleElement.textContent = `
+            @media screen and (max-width: 767px) {
+                .gallery-grid {
+                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+                    grid-gap: 15px !important;
+                }
+                
+                .gallery-item {
+                    height: 350px !important;
+                    margin-bottom: 15px !important;
+                }
+                
+                .gallery-item img {
+                    height: 100% !important;
+                    object-fit: cover !important;
+                }
+                
+                /* Improve navigation buttons on mobile */
+                .gallery-prev, .gallery-next {
+                    width: 40px;
+                    height: 40px;
+                    opacity: 0.8;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    z-index: 10;
+                }
+                
+                .gallery-prev {
+                    left: 10px;
+                }
+                
+                .gallery-next {
+                    right: 10px;
+                }
+                
+                /* Make download buttons more prominent */
+                .download-btn {
+                    padding: 12px 24px !important;
+                    font-size: 16px !important;
+                }
+            }
+        `;
+        document.head.appendChild(styleElement);
+    };
+    
+    // Apply responsive styles
+    addResponsiveStyles();
+    
+    // IMPROVEMENT 2: Reset scroll position when changing categories
+    // Find all filter buttons
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const galleryGrid = document.querySelector('.gallery-grid');
+    
+    // Modified filter button click handler
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filterValue = this.getAttribute('data-filter');
+            
+            // Reset gallery scroll position when changing categories
+            if (galleryGrid) {
+                galleryGrid.scrollLeft = 0;
+            }
+            
+            // The rest of your existing filter button code will run automatically
+        });
+    });
+    
+    // IMPROVEMENT 3: Add swipe navigation for mobile devices
+    if (galleryGrid) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        galleryGrid.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        galleryGrid.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const minSwipeDistance = 50;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                if (swipeDistance > 0) {
+                    // Swipe right - go to previous
+                    galleryGrid.scrollBy({
+                        left: -300,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    // Swipe left - go to next
+                    galleryGrid.scrollBy({
+                        left: 300,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+    }
+    
+    // Add swipe functionality for modal as well
+    const modal = document.querySelector('.gallery-modal');
+    if (modal) {
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        modal.addEventListener('touchstart', function(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+        
+        modal.addEventListener('touchend', function(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleModalSwipe();
+        }, false);
+        
+        function handleModalSwipe() {
+            const minSwipeDistance = 50;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                if (swipeDistance > 0 && typeof navigatePrev === 'function') {
+                    // Swipe right - previous image
+                    navigatePrev();
+                } else if (swipeDistance < 0 && typeof navigateNext === 'function') {
+                    // Swipe left - next image
+                    navigateNext();
+                }
+            }
+        }
+    }
+    
+    // Helper function to check if device is mobile
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+    
+    // Apply additional mobile-specific enhancements
+    if (isMobile()) {
+        // Make gallery controls more visible on mobile
+        const galleryControls = document.querySelectorAll('.gallery-prev, .gallery-next');
+        galleryControls.forEach(control => {
+            control.style.opacity = '0.8';
+            control.style.fontSize = '20px';
+        });
+        
+        // Improve tap target sizes
+        const tappableElements = document.querySelectorAll('.filter-btn, .download-btn, .nav-links a');
+        tappableElements.forEach(element => {
+            element.style.padding = '12px 20px';
+        });
     }
 });
