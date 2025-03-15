@@ -416,8 +416,8 @@ footer .logo-img {
 
 /* Make sure all gallery images have these base properties */
 .gallery-item img {
-    width: 200%;
-    height: 200%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     transition: all 0.4s ease;
 }
@@ -1300,3 +1300,95 @@ footer {
         gap: 20px;
     }
 }
+/* Fixed gallery display - one image at a time */
+.gallery-grid {
+    display: flex;
+    overflow: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  }
+  
+  .gallery-grid::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari, and Opera */
+  }
+  
+  .gallery-item {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    width: 100%;
+    height: 650px; /* Increased height for bigger cards */
+    transition: transform 0.3s ease;
+  }
+  
+  /* Gallery navigation improvements */
+  .gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px; /* Increased size */
+    height: 60px; /* Increased size */
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+    transition: background-color 0.3s ease;
+  }
+  
+  .gallery-nav:hover {
+    background-color: rgba(235, 5, 5, 0.8);
+  }
+  
+  .gallery-prev {
+    left: 20px;
+  }
+  
+  .gallery-next {
+    right: 20px;
+  }
+  
+  /* Ensure images maintain aspect ratio */
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  /* Make overlay text larger to match bigger cards */
+  .gallery-item .overlay h3 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+  
+  .gallery-item .overlay p {
+    font-size: 1.1rem;
+  }
+  
+  /* Prevent partial image display on all screen sizes */
+  @media (max-width: 992px) {
+    .gallery-item {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 600px; /* Slightly smaller on medium screens but still large */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .gallery-item {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 550px; /* Still larger than original on mobile */
+    }
+    
+    .gallery-nav {
+      width: 45px;
+      height: 45px;
+    }
+    
+    .gallery-item .overlay h3 {
+      font-size: 1.5rem;
+    }
+  }
