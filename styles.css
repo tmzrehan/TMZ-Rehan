@@ -1316,7 +1316,7 @@ footer {
     .gallery-item {
       flex: 0 0 90%;
       min-width: 280px;
-      height: 450px;
+      height: 650px;
       scroll-snap-align: center;
       margin-right: 0;
       border-radius: 8px;
