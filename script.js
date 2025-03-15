@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             id: 8,
             category: 'game',
-            image: 'images/ritika.jpg', // Replace with your actual image path
+            image: 'images/basketballaction2.jpg', // Replace with your actual image path
             title: 'Basketball Action',
             description: '',
             showInAll: false // This item will NOT show in the All category
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 10,
             category: 'portrait',
             image: 'images/portraits3.jpg', // Replace with your actual image path
-            title: 'Fashion Portrait',
+            title: 'Fashion Duo',
             description: '',
             showInAll: false // This item will NOT show in the All category
         },
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 11,
             category: 'portrait',
             image: 'images/portraits4.jpg', // Replace with your actual image path
-            title: 'Fashion Portrait',
+            title: 'Modern Traditional',
             description: '',
             showInAll: false // This item will NOT show in the All category
         },
@@ -180,8 +180,8 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             id: 13,
             category: 'event',
-            image: 'images/event-2.jpg', // Replace with your actual image path
-            title: 'Concert',
+            image: 'images/champions.jpg', // Replace with your actual image path
+            title: 'Bharat Sports Union',
             description: '',
             showInAll: false // This item will NOT show in the All category
         },
@@ -269,30 +269,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Return combined array
         return [...items, ...downloadItems];
     }
-    function applyScrollAnimationsToNewItems() {
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15
-        };
+    // Function to apply scroll animations to newly added gallery items
+function applyScrollAnimationsToNewItems() {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+    };
 
-        const observerCallback = (entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in-up');
-                }
-            });
-        };
-
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-        
-        const newItems = document.querySelectorAll('.gallery-item:not(.will-animate)');
-        newItems.forEach(item => {
-            item.classList.add('will-animate');
-            observer.observe(item);
+    const observerCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in-up');
+            }
         });
-    }
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
     
+    const newItems = document.querySelectorAll('.gallery-item:not(.will-animate)');
+    newItems.forEach(item => {
+        item.classList.add('will-animate');
+        observer.observe(item);
+    });
+}
+
     // Update the gallery items array
     const enhancedGalleryItems = addDownloadItemsToGallery(galleryItems);
     
@@ -968,268 +969,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Re-enable overflow to allow scrolling with buttons
     galleryGrid.style.overflowX = 'hidden';
 });
-// Image Zoom Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Create zoom modal HTML structure
-    const zoomModal = document.createElement('div');
-    zoomModal.className = 'zoom-modal';
-    zoomModal.innerHTML = `
-        <span class="close-zoom">&times;</span>
-        <div class="zoom-container">
-            <img class="zoom-img" src="" alt="Zoomed image">
-        </div>
-        <div class="zoom-controls">
-            <div class="zoom-btn zoom-in">+</div>
-            <div class="zoom-btn zoom-out">-</div>
-            <div class="zoom-btn zoom-reset">↺</div>
-        </div>
-    `;
-    document.body.appendChild(zoomModal);
+   
 
-    // Get elements
-    const zoomImg = document.querySelector('.zoom-img');
-    const closeZoom = document.querySelector('.close-zoom');
-    const zoomInBtn = document.querySelector('.zoom-in');
-    const zoomOutBtn = document.querySelector('.zoom-out');
-    const zoomResetBtn = document.querySelector('.zoom-reset');
-    const zoomContainer = document.querySelector('.zoom-container');
-    
-    // Variables for zooming and panning
-    let currentScale = 1;
-    let posX = 0;
-    let posY = 0;
-    let startX, startY;
-    let isDragging = false;
-    
-    // Open zoom modal when clicking on gallery items
-    function initializeGalleryZoom() {
-        // Select all gallery items across all categories
-        const galleryItems = document.querySelectorAll('.gallery-item');
-        galleryItems.forEach(function(item) {
-            item.addEventListener('click', function(e) {
-                // Don't trigger zoom if clicking on a button or link within the gallery item
-                if (e.target.closest('.download-btn') || e.target.closest('a')) {
-                    return;
-                }
-                
-                const imgSrc = this.querySelector('img').src;
-                zoomImg.src = imgSrc;
-                zoomModal.style.display = 'block';
-                
-                // Reset zoom and position
-                resetZoom();
-            });
-        });
-    }
-    
-    // Initialize zoom functionality
-    initializeGalleryZoom();
-    
-    // Re-initialize when category changes (if using AJAX)
-    // You may need to call initializeGalleryZoom() after category changes if using AJAX
-    
-    // Observe DOM changes to handle dynamically added gallery items
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.addedNodes.length) {
-                initializeGalleryZoom();
-            }
-        });
-    });
-    
-    // Start observing the gallery container for changes
-    const galleryContainers = document.querySelectorAll('.gallery-grid, .gallery-container');
-    galleryContainers.forEach(function(container) {
-        observer.observe(container, { childList: true, subtree: true });
-    });
-    
-    // Close zoom modal
-    closeZoom.addEventListener('click', function() {
-        zoomModal.style.display = 'none';
-    });
-    
-    // Close on escape key
-    window.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && zoomModal.style.display === 'block') {
-            zoomModal.style.display = 'none';
-        }
-    });
-    
-    // Zoom in button
-    zoomInBtn.addEventListener('click', function() {
-        if (currentScale < 4) { // Increased max zoom from 3 to 4
-            currentScale += 0.5;
-            updateTransform();
-        }
-    });
-    
-    // Zoom out button
-    zoomOutBtn.addEventListener('click', function() {
-        if (currentScale > 0.5) { // Limit min zoom
-            currentScale -= 0.5;
-            updateTransform();
-        }
-    });
-    
-    // Reset zoom button
-    zoomResetBtn.addEventListener('click', resetZoom);
-    
-    // Double click to toggle between zoomed and normal
-    zoomImg.addEventListener('dblclick', function(e) {
-        if (currentScale === 1) {
-            currentScale = 2;
-            
-            // Zoom towards mouse position
-            const rect = zoomImg.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-            
-            posX = (mouseX - rect.width / 2) * -1;
-            posY = (mouseY - rect.height / 2) * -1;
-        } else {
-            resetZoom();
-        }
-        updateTransform();
-    });
-    
-    // Mouse wheel zoom
-    zoomContainer.addEventListener('wheel', function(e) {
-        e.preventDefault();
-        
-        // Calculate zoom factor based on wheel delta
-        const zoomFactor = 0.1;
-        const delta = e.deltaY > 0 ? -zoomFactor : zoomFactor;
-        
-        // Calculate new scale
-        const newScale = currentScale * (1 + delta);
-        
-        // Apply limits
-        if (newScale >= 0.5 && newScale <= 4) {
-            // Get mouse position relative to image
-            const rect = zoomImg.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
-            
-            // Calculate cursor position in image coordinates
-            const x = (mouseX - posX) / currentScale;
-            const y = (mouseY - posY) / currentScale;
-            
-            // Update scale
-            currentScale = newScale;
-            
-            // Adjust position to zoom toward cursor
-            posX = mouseX - x * currentScale;
-            posY = mouseY - y * currentScale;
-            
-            updateTransform();
-        }
-    });
-    
-    // Start dragging
-    zoomImg.addEventListener('mousedown', function(e) {
-        if (currentScale > 1) {
-            isDragging = true;
-            startX = e.clientX - posX;
-            startY = e.clientY - posY;
-            zoomImg.classList.add('zoomed');
-        }
-    });
-    
-    // Dragging
-    window.addEventListener('mousemove', function(e) {
-        if (isDragging) {
-            posX = e.clientX - startX;
-            posY = e.clientY - startY;
-            updateTransform();
-        }
-    });
-    
-    // Stop dragging
-    window.addEventListener('mouseup', function() {
-        isDragging = false;
-    });
-    
-    // Update transform with current scale and position
-    function updateTransform() {
-        // Add zoomed class if zoomed in
-        if (currentScale > 1) {
-            zoomImg.classList.add('zoomed');
-        } else {
-            zoomImg.classList.remove('zoomed');
-        }
-        
-        zoomImg.style.transform = `translate(${posX}px, ${posY}px) scale(${currentScale})`;
-    }
-    
-    // Reset zoom and position
-    function resetZoom() {
-        currentScale = 1;
-        posX = 0;
-        posY = 0;
-        zoomImg.classList.remove('zoomed');
-        updateTransform();
-    }
-    
-    // Mobile touch support
-    zoomImg.addEventListener('touchstart', function(e) {
-        if (currentScale > 1 && e.touches.length === 1) {
-            isDragging = true;
-            startX = e.touches[0].clientX - posX;
-            startY = e.touches[0].clientY - posY;
-        }
-    });
-    
-    zoomImg.addEventListener('touchmove', function(e) {
-        if (isDragging && e.touches.length === 1) {
-            posX = e.touches[0].clientX - startX;
-            posY = e.touches[0].clientY - startY;
-            updateTransform();
-            e.preventDefault();
-        }
-    });
-    
-    zoomImg.addEventListener('touchend', function() {
-        isDragging = false;
-    });
-    
-    // Pinch to zoom for mobile
-    let initialDistance = 0;
-    let initialScale = 1;
-    
-    zoomImg.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            initialDistance = getDistance(
-                e.touches[0].clientX, 
-                e.touches[0].clientY, 
-                e.touches[1].clientX, 
-                e.touches[1].clientY
-            );
-            initialScale = currentScale;
-        }
-    });
-    
-    zoomImg.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2) {
-            const currentDistance = getDistance(
-                e.touches[0].clientX, 
-                e.touches[0].clientY, 
-                e.touches[1].clientX, 
-                e.touches[1].clientY
-            );
-            
-            const newScale = initialScale * (currentDistance / initialDistance);
-            currentScale = Math.min(Math.max(newScale, 0.5), 4);
-            
-            updateTransform();
-            e.preventDefault(); // Prevent page zoom
-        }
-    });
-    
-    // Calculate distance between two points
-    function getDistance(x1, y1, x2, y2) {
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
-});
 document.addEventListener('DOMContentLoaded', function() {
     const galleryGrid = document.querySelector('.gallery-grid');
     const prevBtn = document.querySelector('.gallery-prev');
