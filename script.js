@@ -1,3 +1,4 @@
+let populateGallery; // Declare at top level
 document.addEventListener('DOMContentLoaded', function() {
     // Fix for Font Awesome loading issues
     const fixFontAwesome = () => {
@@ -268,12 +269,36 @@ document.addEventListener('DOMContentLoaded', function() {
         // Return combined array
         return [...items, ...downloadItems];
     }
+    function applyScrollAnimationsToNewItems() {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
 
+        const observerCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        
+        const newItems = document.querySelectorAll('.gallery-item:not(.will-animate)');
+        newItems.forEach(item => {
+            item.classList.add('will-animate');
+            observer.observe(item);
+        });
+    }
+    
     // Update the gallery items array
     const enhancedGalleryItems = addDownloadItemsToGallery(galleryItems);
     
+    
     // Populate gallery with items
-    function populateGallery(items) {
+    populateGallery = function(items) {
         galleryGrid.innerHTML = '';
 
         items.forEach((item, index) => {
