@@ -4,6 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TMZ Photography</title>
+    <style>
+        @font-face {
+            font-family: 'TMZCustomFont';
+            src: url('/batmfa__.ttf') format('truetype');
+        }
+        
+        /* Add a class for the TMZ text in SVG */
+        .tmz-text {
+            font-family: 'TMZCustomFont', sans-serif;
+            font-size: 250px;
+            fill: #ff0000;
+            opacity: 0.06;
+        }
+        .tmz-header-text {
+            font-family: 'TMZCustomFont', sans-serif;
+            font-size: 2.2rem;
+            fill: #ff0000;
+            
+        }
+    </style>
+    <!-- Favicon links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/TMZlogo.jpeg">
+    <link rel="icon" type="image/jpeg" sizes="32x32" href="images/TMZlogo.jpeg">
+    <link rel="icon" type="image/jpeg" sizes="16x16" href="images/TMZlogo.jpeg">
+    <link rel="manifest" href="images/site.webmanifest">
+    
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <!-- EmailJS SDK -->
@@ -16,13 +42,14 @@
     </script>
 </head>
 <body>
+    
     <!-- Header with Navigation -->
     <header>
         <div class="container">
             <nav>
                 <div class="logo">
                     <div class="logo-img"></div>
-                    <h1>TMZ</h1>
+                    <h1 class="tmz-header-text"><a href="#home">TMZ</a></h1>
                 </div>
                 <div class="menu-toggle">
                     <i class="fas fa-bars"></i>
@@ -70,7 +97,7 @@
               <path d="M0,500 L200,450 L400,500 L600,400 L800,500 L1000,400 L1200,450" stroke="#990000" stroke-width="4" fill="none" opacity="0.07" />
               
               <!-- TMZ as a single text element, centered and positioned in the visible area -->
-              <text x="50%" y="32%" text-anchor="middle" dominant-baseline="middle" font-family="Impact, sans-serif" font-size="180" fill="#ff0000" opacity="0.06">TMZ</text>
+             <text x="50%" y="32%" text-anchor="middle" dominant-baseline="middle" class="tmz-text">TMZ</text>        
             </svg>
           </div>
         </div>
@@ -111,7 +138,7 @@
                         winning the inter-college Photography VTU
                         competition, highlighting my dedication and
                         talent in the field.</p>
-                    <p>My approach combines technical expertise with an artistic eye, resulting in images that tell compelling stories of the basketball world.</p>
+                    <p>My approach combines technical expertise with an artistic eye, resulting in images that tell compelling stories.</p>
                     <div class="stats">
                         <div class="stat">
                             <h3>300+</h3>

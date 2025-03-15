@@ -1413,3 +1413,70 @@ footer {
       overscroll-behavior-x: contain;
     }
   }
+  /* Fix for Book Now button active state */
+.nav-links a.btn {
+    background-color: var(--dark-red);
+    color: white;
+}
+
+.nav-links a.btn:hover {
+    background-color: transparent;
+    color: var(--dark-red);
+}
+
+/* Prevent the underline effect on the Book Now button */
+.nav-links a.btn:after {
+    display: none;
+}
+
+/* Override any active state styling for the Book Now button */
+.nav-links a.btn.active {
+    background-color: var(--dark-red);
+    color: white;
+}
+
+/* Maintain hover effects even when active */
+.nav-links a.btn.active:hover {
+    background-color: transparent;
+    color: var(--dark-red);
+}
+
+/* Ensure the button maintains its styling when nav is active */
+.nav-links.active a.btn {
+    background-color: var(--dark-red);
+    color: white;
+}
+
+/* Ensure proper button appearance in mobile menu */
+@media (max-width: 768px) {
+    .nav-links a.btn {
+        margin: 5px 0;
+        width: 80%;
+        text-align: center;
+    }
+}
+/* TMZ logo text styling and hover effects */
+.logo h1 a {
+    color: #ffffff; /* Your blue color as shown in screenshot */
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'TMZCustomFont', sans-serif;
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+    position: relative;
+}
+
+/* 3D hover effect for the TMZ text */
+.logo h1 a:hover {
+    transform: translateY(-3px) scale(1.05);
+    text-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Fix the HTML structure for the logo */
+.tmz-header-text {
+    margin: 0;
+    padding: 0;
+    font-family: 'TMZCustomFont', sans-serif;
+    font-size: 2.2rem;
+    
+}

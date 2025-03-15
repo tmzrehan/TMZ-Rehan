@@ -188,8 +188,8 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             id: 14,
             category: 'event',
-            image: 'images/nbl.jpg', // Replace with your actual image path
-            title: 'Concert',
+            image: 'images/fashionshow.jpg', // Replace with your actual image path
+            title: 'Ubdhav Fashion Show',
             description: '',
             showInAll: false // This item will NOT show in the All category
         },
