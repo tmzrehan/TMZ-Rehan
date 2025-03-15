@@ -1489,3 +1489,18 @@ footer {
     font-style: normal;
 }
 
+/* Adjust TMZ background text position for mobile devices */
+@media screen and (max-width: 768px) {
+    .tmz-text {
+        top: 35% !important; /* Move down further on mobile */
+        transform: translateY(100px) !important; /* Additional downward shift */
+    }
+}
+
+/* For smaller mobile screens */
+@media screen and (max-width: 480px) {
+    .tmz-text {
+        top: 40% !important; /* Even lower position for smaller screens */
+        transform: translateY(300px) !important;
+    }
+}
