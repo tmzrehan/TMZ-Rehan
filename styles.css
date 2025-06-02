@@ -510,7 +510,7 @@ footer .logo-img {
 
 /* Category-specific backgrounds */
 .gallery.category-all {
-    background: radial-gradient(circle, rgba(92, 1, 1, 0.74) 0%, transparent 50%), 
+    background: radial-gradient(circle, rgba(56, 0, 0, 0.74) 0%, transparent 50%), 
                 radial-gradient(circle, rgba(139, 0, 0, 0.404) 10%, transparent 50%);
 }
 
