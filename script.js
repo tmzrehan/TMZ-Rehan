@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 isDownloadItem: true,
                 showInAll: false, // Download items for specific categories don't show in All
                 // Add the download URL for each category
-                downloadUrl: 'https://drive.google.com/file/d/1wB080Bl-Bt7eN-X5QJRbZ23BYrD2N3TV/view?usp=sharing'
+                downloadUrl: 'https://drive.google.com/file/d/1ZHE9Ecg5mIBa2lVVYxBO6m3fHkqGpIdI/view'
             };
         });
 
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
             isDownloadItem: true,
             showInAll: true, // This one shows in All category
             // Add the download URL for the all category
-            downloadUrl: 'https://drive.google.com/file/d/1wB080Bl-Bt7eN-X5QJRbZ23BYrD2N3TV/view?usp=sharing'
+            downloadUrl: 'https://drive.google.com/file/d/1ZHE9Ecg5mIBa2lVVYxBO6m3fHkqGpIdI/view'
         });
 
         // Return combined array
